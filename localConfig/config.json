@@ -1,0 +1,23 @@
+{
+    "environment": "local",
+    "enableAllLogs": true,
+    "port": 8082,
+    "databaseConfiguration": {
+        "username": "root",
+        "password": "root",
+        "database": "authentication",
+        "host": "localhost",
+        "dialect": "mysql",
+        "option": {
+            "host": "localhost",
+            "dialect": "mysql",
+            "operatorsAliases": false,
+            "pool": {
+                "max": 5,
+                "min": 0,
+                "acquire": 30000,
+                "idle": 10000
+            }
+        }
+    }
+}
