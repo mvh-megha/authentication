@@ -56,26 +56,6 @@ function updateRecord(modelName, query, record, request) {
         }
     });
 }
-/**
- *  This function is to delete records via model
- *  @param {string} modelName table name
- *  @param {object} query condition on basis of which records will be deleted
- *  @returns max no. of records deleted(0 or 1)
- */
-function deleteRecord(modelName, query) {
-    return new Promise((resolve, reject) => {
-        if (db[modelName]) {
-            db[modelName].destroy(query).then(function (data) {
-                resolve(data);
-            })
-                .catch(err => {
-                    reject(new Error(err.message || "Error while deleting record"))
-                });
-        } else {
-            reject(new Error("Model not defined"))
-        }
-    });
-}
 
 /**
  *  This function is to get records via model
@@ -106,6 +86,5 @@ module.exports = {
     db,
     createRecord,
     updateRecord,
-    deleteRecord,
     getRawRecords
 };

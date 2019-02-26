@@ -75,15 +75,7 @@ router.post("/login", async (req, res) => {
             return res.status(400).send({ message: "Invalid request Datatypes" });
         } else {
             /* Check if the user exists for requested email */
-            var user = await dbOperations.getRawRecords('user', {
-                where: {
-                    email: data.email,
-                    status: {
-                        [dbOperations.db.Sequelize.Op.notIn]: 3
-                    }
-                },
-                attributes: ['id', 'firstName', 'lastName', 'status', 'email', 'sessionId', 'salt', 'password']
-            });
+            var user = await checkUser(data.email)
             /* If user doesnot exist */
             if (user.length < 1) {
                 return res.status(400).send({ message: 'Not a valid user' })
@@ -135,15 +127,7 @@ router.post("/resetPassword", async (req, res) => {
             return res.status(400).send({ message: "Minimum password length is 6 characters" });
         } else {
             /* Check if the user exists with request email */
-            var user = await dbOperations.getRawRecords('user', {
-                where: {
-                    email: data.email,
-                    status: {
-                        [dbOperations.db.Sequelize.Op.notIn]: 3
-                    }
-                },
-                attributes: ['id', 'firstName', 'lastName', 'status', 'email', 'sessionId', 'salt', 'password']
-            });
+            var user = await checkUser(data.email)
             if (!user || user.length == 0) {
                 return res.status(400).send({ message: "User doesnot exist for requested email" })
             } else {
@@ -196,15 +180,7 @@ router.post("/forgotPassword", async (req, res) => {
             return res.status(400).send({ message: "Invalid request Datatypes" });
         } else {
             /* Check if user exists with request email id */
-            var user = await dbOperations.getRawRecords('user', {
-                where: {
-                    email: data.email,
-                    status: {
-                        [dbOperations.db.Sequelize.Op.notIn]: 3
-                    }
-                },
-                attributes: ['id', 'firstName', 'lastName', 'status', 'email', 'sessionId', 'salt', 'password']
-            });
+            var user = await checkUser(data.email)
             if (!user || user.length == 0) {
                 return res.status(400).send({ message: "User doesnot exist for requested email" })
             } else {
@@ -244,7 +220,7 @@ router.post("/forgotPassword", async (req, res) => {
  * @param {String} email 
  * @returns false if email exists in db, true if not
  */
-const checkEmailAlreadyExist = async (email) => {
+const checkEmailAlreadyExist = async function (email) {
     try {
         /* DB operation */
         var record = await dbOperations.getRawRecords('user', {
@@ -262,6 +238,28 @@ const checkEmailAlreadyExist = async (email) => {
         }
     } catch (e) {
         throw e;
+    }
+}
+
+/**
+ * This function is to check if the user exists for given email id
+ * @param {String} email 
+ * @returns user record
+ */
+const checkUser = async function (email) {
+    try {
+        var user = await dbOperations.getRawRecords('user', {
+            where: {
+                email: data.email,
+                status: {
+                    [dbOperations.db.Sequelize.Op.notIn]: 3
+                }
+            },
+            attributes: ['id', 'firstName', 'lastName', 'status', 'email', 'sessionId', 'salt', 'password']
+        });
+        return user;
+    } catch (error) {
+        throw error
     }
 }
 
